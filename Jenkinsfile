@@ -12,10 +12,6 @@ pipeline {
                 sh '''
                     cd seminario/
                     npm install
-                    npm i jasmine
-                    jasmine init
-                    npm i express
-                    node server.js
                    '''
             }
         }
