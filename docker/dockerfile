@@ -1,0 +1,53 @@
+# Define nossa imagem base
+FROM jenkins/jenkins:lts-jdk11
+
+# Define nosso usuario dentro do container
+USER root
+
+# Executa comandos para instalar o maven
+RUN apt-get update
+
+#RUN apt install curl
+
+# instalar o node 
+#RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+#RUN apt-get install -y nodejs
+#RUN node --version
+
+ENV NODE_VERSION=16.13.0
+RUN apt install -y curl
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN node --version
+RUN npm --version
+
+# Instalando o npm
+RUN apt-get install -y npm
+
+# Instalando o angular
+RUN npm install -g @angular/cli
+
+# Instalando o jasmine
+RUN npm install jasmine -g 
+RUN npm install -g karma-cli
+
+# Instalando mailutils
+RUN apt-get install -y mailutils
+
+# Instalando o chrome
+RUN apt-get install -y wget
+RUN wget --help
+RUN curl -q -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get -y install ./google-chrome-stable_current_amd64.deb
+
+# Limpa arquivos baixados com apt-get
+RUN apt-get clean
+
+USER jenkins
+
+# docker build --tag="jenkins-docker-s107" ./docker comando pra buildar uma imagem
+# docker run -p 8080:8080 -p 50000:50000 jenkins-docker-s107
